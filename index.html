@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>Unbl0ck£d G@mes</title>
+    <title>Unbl0ck£d G@mes | Data_Center</title>
     <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;700&family=Inter:wght@400;800&display=swap" rel="stylesheet">
     <style>
         :root{--bg:#000;--primary:#4169e1;--border:#1a1a1a;--text-main:#fff;--text-dim:#555;--nav-height:60px}
@@ -53,10 +53,10 @@
             font-family: 'Fira Code', monospace; font-size: 0.75rem; text-transform: uppercase;
         }
         .header-section {
-            max-width: 1600px; padding: clamp(30px, 8vw, 60px) 20px;
+            max-width: 1600px; padding: 30px 20px;
             border-left: 1px solid var(--border); margin: 0 20px;
         }
-        h1 { font-family: 'Fira Code', monospace; font-size: clamp(1.8rem, 6vw, 2.8rem); letter-spacing: -1.5px; font-weight: 700; }
+        h1 { font-family: 'Fira Code', monospace; font-size: clamp(1.8rem, 5vw, 2.5rem); letter-spacing: -1.5px; font-weight: 700; }
         h1 span { color: var(--primary); }
         .stats { font-family: 'Fira Code', monospace; font-size: 0.65rem; color: var(--text-dim); text-transform: uppercase; margin-top: 10px; letter-spacing: 2px; }
         .container { max-width: 1600px; margin: 0 auto; padding: 0 20px 60px; }
@@ -70,19 +70,43 @@
             text-transform: uppercase; white-space: nowrap; transition: 0.2s;
         }
         .tag.active { border-color: #fff; color: #fff; }
-        .game-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; }
-        .game-item {
-            background: var(--bg); padding: 20px; cursor: pointer; border: 1px solid var(--border);
-            min-height: 130px; display: flex; flex-direction: column; justify-content: space-between; transition: .15s ease;
+        
+        .game-grid { 
+            display: grid; 
+            grid-template-columns: repeat(6, 1fr); 
+            gap: 12px; 
         }
-        .game-item:hover { border-color: #333; transform: translateY(-2px); background: #080808; }
-        .game-item .id { font-family: 'Fira Code', monospace; font-size: 0.6rem; color: var(--text-dim); }
-        .game-item .title { font-weight: 800; font-size: 0.85rem; color: #fff; margin: 10px 0; line-height: 1.2; }
-        .game-item .cat { font-family: 'Fira Code', monospace; font-size: 0.55rem; color: var(--primary); text-transform: uppercase; }
+        
+        .game-item {
+            background: #050505; cursor: pointer; border: 1px solid var(--border);
+            display: flex; flex-direction: column; overflow: hidden; transition: .2s ease;
+        }
+        .game-item:hover { border-color: var(--primary); transform: translateY(-4px); }
+        
+        .img-container {
+            width: 100%;
+            aspect-ratio: 4/3;
+            overflow: hidden;
+            background: #111;
+            border-bottom: 1px solid var(--border);
+        }
+        .img-container img {
+            width: 100%; height: 100%; object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+        .game-item:hover img { transform: scale(1.05); }
+
+        .game-info { padding: 10px; flex-grow: 1; display: flex; flex-direction: column; justify-content: center; }
+        .game-item .title { font-weight: 800; font-size: 0.75rem; color: #fff; margin: 2px 0 5px; line-height: 1.2; }
+        .game-item .cat { font-family: 'Fira Code', monospace; font-size: 0.5rem; color: var(--primary); text-transform: uppercase; }
+
         footer {
             padding: 60px 20px; text-align: center; color: #444; font-family: 'Fira Code', monospace;
             font-size: 0.6rem; letter-spacing: 1px; border-top: 1px solid var(--border); margin-top: 40px;
         }
+
+        @media (max-width: 1200px) { .game-grid { grid-template-columns: repeat(4, 1fr); } }
+        @media (max-width: 800px) { .game-grid { grid-template-columns: repeat(3, 1fr); } }
         @media (max-width: 500px) {
             .game-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
             .logo { display: none; }
@@ -114,6 +138,8 @@
 <script>
     const API_URL = 'https://cdn.jsdelivr.net/gh/HyperRushNet/hyperrushnet.github.io/assets/json/games.json';
     const LIB_URL = "https://cdn.jsdelivr.net/gh/HyperRushNet/dev/lib/hrn-game_1.1_min.js";
+    const BASE_IMG_URL = "https://hyperrushnet.github.io";
+    
     let deviceData = [];
     let currentCategory = 'All';
     let userDevice = 'pc-no-touch';
@@ -163,21 +189,23 @@
         document.getElementById('counter').innerText = `${filtered.length} MATCHES // ${userDevice.toUpperCase()} // "${displayVal.toUpperCase()}"`;
         document.getElementById('grid').innerHTML = filtered.map((g) => `
             <div class="game-item" onclick="launch(${g.number}, '${g.name}')">
-                <div class="id">ID_${String(g.number).padStart(3, '0')}</div>
-                <div class="title">${g.name.toUpperCase()}</div>
-                <div class="cat">${g.category}</div>
+                <div class="img-container">
+                    <img src="${BASE_IMG_URL}${g.img}" alt="${g.name}" loading="lazy">
+                </div>
+                <div class="game-info">
+                    <div class="title">${g.name.toUpperCase()}</div>
+                    <div class="cat">${g.category}</div>
+                </div>
             </div>`).join('');
     }
 
     function launch(nr, name) {
-        const win = window.open('about:blank', '_blank');
-        if (!win) return alert('POPUP_BLOCKED');
-        win.document.write(`<!DOCTYPE html><html><head><title>${name}</title><style>body{margin:0;background:#000;height:100vh;overflow:hidden}hrn-game{width:100%;height:100%;display:block}</style><script src="${LIB_URL}"><\/script></head><body><hrn-game nr="${nr}" credits="false" redirectblock="true"></hrn-game></body></html>`);
-        win.document.close();
+        document.open();
+        document.write(`<!DOCTYPE html><html><head><title>${name}</title><style>body{margin:0;background:#000;height:100vh;overflow:hidden}hrn-game{width:100%;height:100%;display:block}</style><script src="${LIB_URL}"><\/script></head><body><hrn-game nr="${nr}" credits="false" redirectblock="true"></hrn-game></body></html>`);
+        document.close();
     }
 
     init();
-console.warn("The original site was created by HyperRushNet on GitHub. This is a legally authorized copy, hosted independently.");
 </script>
 </body>
 </html>
