@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Unbl0ck£d G@mes | Data_Center</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;700&family=Inter:wght@400;800&display=swap" rel="stylesheet">
+    <style>
+        :root{--bg:#000;--primary:#4169e1;--border:#1a1a1a;--text-main:#fff;--text-dim:#555;--nav-height:60px}
+
+        ::-webkit-scrollbar { width: 8px; height: 4px; }
+        ::-webkit-scrollbar-track { background: var(--bg); }
+        ::-webkit-scrollbar-thumb { background: #222; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #333; }
+
+        *{margin:0;padding:0;box-sizing:border-box;-webkit-font-smoothing:antialiased}
+        body {
+            background-color: var(--bg);
+            color: var(--text-main);
+            font-family: Inter, sans-serif;
+            padding-top: var(--nav-height);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .bg-fx { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background: #000; }
+        .orb {
+            position: absolute; width: 800px; height: 800px; border-radius: 50%;
+            background: radial-gradient(circle, rgba(65,105,225,.12) 0, transparent 70%);
+            filter: blur(60px); animation: move 25s ease-in-out infinite alternate;
+        }
+        .orb-2 { right: -200px; bottom: -200px; background: radial-gradient(circle, rgba(123,104,238,.08) 0, transparent 70%); animation-delay: -12s; }
+        @keyframes move { 0% { transform: translate(-10%, -10%); } to { transform: translate(15%, 15%); } }
+
+        nav {
+            position: fixed; top: 0; left: 0; right: 0; height: var(--nav-height);
+            background: rgba(0, 0, 0, .9); border-bottom: 1px solid var(--border); z-index: 1000;
+            display: flex; align-items: center;
+        }
+        .nav-content {
+            max-width: 1600px; width: 100%; margin: 0 auto; padding: 0 20px;
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .logo { font-family: 'Fira Code', monospace; font-weight: 700; font-size: 0.85rem; color: var(--primary); }
+        .search-container { flex: 1; max-width: 400px; margin-left: 20px; }
+        #searchBar {
+            width: 100%; background: transparent; border: 1px solid var(--border);
+            padding: 8px 12px; color: #fff; outline: none;
+            font-family: 'Fira Code', monospace; font-size: 0.75rem; text-transform: uppercase;
+        }
+
+        .header-section {
+            max-width: 1600px; padding: clamp(30px, 8vw, 60px) 20px;
+            border-left: 1px solid var(--border); margin: 0 20px;
+        }
+        h1 { font-family: 'Fira Code', monospace; font-size: clamp(1.8rem, 6vw, 2.8rem); letter-spacing: -1.5px; font-weight: 700; }
+        .stats { font-family: 'Fira Code', monospace; font-size: 0.65rem; color: var(--text-dim); text-transform: uppercase; margin-top: 10px; letter-spacing: 2px; }
+
+        .container { max-width: 1600px; margin: 0 auto; padding: 0 20px 60px; }
+        .tag-wrapper {
+            display: flex; gap: 8px; margin-bottom: 25px; overflow-x: auto;
+            padding-bottom: 5px; /* Ruimte voor de dunne scrollbar */
+        }
+        .tag {
+            padding: 4px 10px; border: 1px solid var(--border); font-size: 0.6rem;
+            color: var(--text-dim); cursor: pointer; font-family: 'Fira Code', monospace;
+            text-transform: uppercase; white-space: nowrap; transition: 0.2s;
+        }
+        .tag.active { border-color: #fff; color: #fff; }
+
+        .game-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; }
+        .game-item {
+            background: var(--bg); padding: 20px; cursor: pointer; border: 1px solid var(--border);
+            min-height: 130px; display: flex; flex-direction: column; justify-content: space-between; transition: .15s ease;
+        }
+        .game-item:hover { border-color: #333; transform: translateY(-2px); background: #080808; }
+        .game-item .id { font-family: 'Fira Code', monospace; font-size: 0.6rem; color: var(--text-dim); }
+        .game-item .title { font-weight: 800; font-size: 0.85rem; color: #fff; margin: 10px 0; line-height: 1.2; }
+        .game-item .cat { font-family: 'Fira Code', monospace; font-size: 0.55rem; color: var(--primary); text-transform: uppercase; }
+
+        footer {
+            padding: 60px 20px; text-align: center; color: #444; font-family: 'Fira Code', monospace;
+            font-size: 0.6rem; letter-spacing: 1px; border-top: 1px solid var(--border); margin-top: 40px;
+        }
+
+        @media (max-width: 500px) {
+            .game-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+            .logo { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="bg-fx">
+    <div class="orb"></div>
+    <div class="orb orb-2"></div>
+</div>
+
+<nav>
+    <div class="nav-content">
+        <div class="logo">UNBL0CK£D G@MES</div>
+        <div class="search-container">
+            <input type="text" id="searchBar" placeholder="SEARCH GAME...">
+        </div>
+    </div>
+</nav>
+
+<div class="header-section">
+    <h1>UNBL0CK£D G@MES</h1>
+    <div class="stats" id="counter">INITIALIZING CORE...</div>
+</div>
+
+<div class="container">
+    <div id="tags" class="tag-wrapper"></div>
+    <div id="grid" class="game-grid"></div>
+    <footer>&copy; 2026 HRN // Provided by HyperRush // Not an official website.</footer>
+</div>
+
+<script>
+    const API_URL = 'https://cdn.jsdelivr.net/gh/HyperRushNet/hyperrushnet.github.io/assets/json/games.json';
+    const LIB_URL = "https://cdn.jsdelivr.net/gh/HyperRushNet/dev/lib/hrn-game_1.1_min.js";
+
+    let deviceData = [];
+    let currentCategory = 'All';
+    let userDevice = 'pc-no-touch';
+
+    function detectDevice() {
+        const ua = navigator.userAgent.toLowerCase();
+        const isTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+        const isMobile = /iphone|ipod|android.*mobile|blackberry|iemobile|opera mini/i.test(ua);
+        const isTablet = /ipad|android(?!.*mobile)|tablet/i.test(ua);
+        if (isMobile) return 'phone';
+        if (isTablet) return 'tablet';
+        if (isTouch) return 'pc-touch';
+        return 'pc-no-touch';
+    }
+
+    async function init() {
+        userDevice = detectDevice();
+        try {
+            const res = await fetch(API_URL);
+            const rawData = await res.json();
+            deviceData = rawData.filter(g => g.device && g.device.includes(userDevice));
+
+            const cats = ['All', ...new Set(deviceData.map(g => g.category))];
+            document.getElementById('tags').innerHTML = cats.map(c =>
+                `<div class="tag ${c==='All'?'active':''}" onclick="filterCat('${c}', this)">${c}</div>`
+            ).join('');
+
+            render();
+            document.getElementById('searchBar').oninput = render;
+        } catch (e) {
+            document.getElementById('counter').innerText = "FATAL_ERROR: DB_OFFLINE";
+        }
+    }
+
+    function filterCat(cat, el) {
+        currentCategory = cat;
+        document.querySelectorAll('.tag').forEach(t => t.classList.remove('active'));
+        el.classList.add('active');
+        render();
+    }
+
+    function render() {
+        const query = document.getElementById('searchBar').value.toLowerCase();
+        const filtered = deviceData.filter(g => {
+            return (currentCategory === 'All' || g.category === currentCategory) &&
+                g.name.toLowerCase().includes(query);
+        });
+
+        const displayVal = query.length > 5 ? query.substring(0, 5) + "..." : query;
+        document.getElementById('counter').innerText = `${filtered.length} MATCHES // ${userDevice.toUpperCase()} // "${displayVal.toUpperCase()}"`;
+
+        document.getElementById('grid').innerHTML = filtered.map((g, i) => `
+            <div class="game-item" onclick="launch(${g.number}, '${g.name}')">
+                <div class="id">ID_${String(i+1).padStart(3, '0')}</div>
+                <div class="title">${g.name.toUpperCase()}</div>
+                <div class="cat">${g.category}</div>
+            </div>`).join('');
+    }
+
+    function launch(nr, name) {
+        const win = window.open('about:blank', '_blank');
+        if (!win) return alert('POPUP_BLOCKED');
+        win.document.write(`<!DOCTYPE html><html><head><title>${name}</title><style>body{margin:0;background:#000;height:100vh;overflow:hidden}hrn-game{width:100%;height:100%;display:block}</style><script src="${LIB_URL}"><\/script></head><body><hrn-game nr="${nr}" credits="false" redirectblock="true"></hrn-game></body></html>`);
+        win.document.close();
+    }
+
+    init();
+</script>
+</body>
+</html>
