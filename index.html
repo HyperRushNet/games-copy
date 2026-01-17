@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>Unbl0ck£d G@mes</title>
+    <title>Unbl0ck£d G@mes | Data_Center</title>
     <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;700&family=Inter:wght@400;800&display=swap" rel="stylesheet">
     <style>
         :root{--bg:#000;--primary:#4169e1;--border:#1a1a1a;--text-main:#fff;--text-dim:#555;--nav-height:60px}
@@ -70,47 +70,25 @@
             text-transform: uppercase; white-space: nowrap; transition: 0.2s;
         }
         .tag.active { border-color: #fff; color: #fff; }
-        
-        .game-grid { 
-            display: grid; 
-            grid-template-columns: repeat(6, 1fr); 
-            gap: 12px; 
-        }
-        
+        .game-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; }
         .game-item {
             background: #050505; cursor: pointer; border: 1px solid var(--border);
             display: flex; flex-direction: column; overflow: hidden; transition: .2s ease;
         }
         .game-item:hover { border-color: var(--primary); transform: translateY(-4px); }
-        
         .img-container {
-            width: 100%;
-            aspect-ratio: 4/3;
-            overflow: hidden;
-            background: #111;
-            border-bottom: 1px solid var(--border);
+            width: 100%; aspect-ratio: 4/3; overflow: hidden;
+            background: #111; border-bottom: 1px solid var(--border);
         }
-        .img-container img {
-            width: 100%; height: 100%; object-fit: cover;
-            transition: transform 0.3s ease;
-        }
+        .img-container img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s ease; }
         .game-item:hover img { transform: scale(1.05); }
-
         .game-info { padding: 10px; flex-grow: 1; display: flex; flex-direction: column; justify-content: center; }
         .game-item .title { font-weight: 800; font-size: 0.75rem; color: #fff; margin: 2px 0 5px; line-height: 1.2; }
         .game-item .cat { font-family: 'Fira Code', monospace; font-size: 0.5rem; color: var(--primary); text-transform: uppercase; }
-
-        footer {
-            padding: 60px 20px; text-align: center; color: #444; font-family: 'Fira Code', monospace;
-            font-size: 0.6rem; letter-spacing: 1px; border-top: 1px solid var(--border); margin-top: 40px;
-        }
-
+        footer { padding: 60px 20px; text-align: center; color: #444; font-family: 'Fira Code', monospace; font-size: 0.6rem; letter-spacing: 1px; border-top: 1px solid var(--border); margin-top: 40px; }
         @media (max-width: 1200px) { .game-grid { grid-template-columns: repeat(4, 1fr); } }
         @media (max-width: 800px) { .game-grid { grid-template-columns: repeat(3, 1fr); } }
-        @media (max-width: 500px) {
-            .game-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
-            .logo { display: none; }
-        }
+        @media (max-width: 500px) { .game-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; } .logo { display: none; } }
     </style>
 </head>
 <body>
@@ -139,7 +117,6 @@
     const API_URL = 'https://cdn.jsdelivr.net/gh/HyperRushNet/hyperrushnet.github.io/assets/json/games.json';
     const LIB_URL = "https://cdn.jsdelivr.net/gh/HyperRushNet/dev/lib/hrn-game_1.1_min.js";
     const BASE_IMG_URL = "https://hyperrushnet.github.io";
-    
     let deviceData = [];
     let currentCategory = 'All';
     let userDevice = 'pc-no-touch';
@@ -201,7 +178,30 @@
 
     function launch(nr, name) {
         document.open();
-        document.write(`<!DOCTYPE html><html><head><title>${name}</title><style>body{margin:0;background:#000;height:100vh;overflow:hidden}hrn-game{width:100%;height:100%;display:block}</style><script src="${LIB_URL}"><\/script></head><body><hrn-game nr="${nr}" credits="false" redirectblock="true"></hrn-game></body></html>`);
+        document.write(`
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <title>${name}</title>
+                <style>
+                    body{margin:0;background:#000;height:100vh;overflow:hidden;font-family:sans-serif}
+                    hrn-game{width:100%;height:100%;display:block}
+                    #back-btn{
+                        position:fixed;top:15px;left:15px;z-index:9999;
+                        background:rgba(0,0,0,0.6);color:#fff;border:1px solid #333;
+                        padding:8px 15px;cursor:pointer;font-size:12px;
+                        text-transform:uppercase;letter-spacing:1px;transition:0.2s;
+                    }
+                    #back-btn:hover{background:#fff;color:#000;border-color:#fff}
+                </style>
+                <script src="${LIB_URL}"><\/script>
+            </head>
+            <body>
+                <button id="back-btn" onclick="location.reload()">Back to Menu</button>
+                <hrn-game nr="${nr}" credits="false" redirectblock="true"></hrn-game>
+            </body>
+            </html>
+        `);
         document.close();
     }
 
