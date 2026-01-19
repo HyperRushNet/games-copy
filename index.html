@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>Unbl0ck£d G@mes | Data_Center</title>
     <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;700&family=Inter:wght@400;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/gh/HyperRushNet/dev/lib/hrn-game_1.1_min.js"></script>
     <style>
         :root {
             --bg: #000;
@@ -87,19 +88,17 @@
         }
         .game-item:hover { border-color: var(--primary); transform: translateY(-4px); }
         
-        /* --- AANGEPASTE FOTO FILTER (Gedimd met kleur) --- */
         .img-container {
             width: 100%; aspect-ratio: 4/3; overflow: hidden;
             background: #000; border-bottom: 1px solid var(--border);
         }
         .img-container img { 
             width: 100%; height: 100%; object-fit: cover; 
-            /* Muted look: 40% grijs, iets donkerder voor contrast */
             filter: grayscale(40%) brightness(0.8) contrast(1.1); 
             transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
         .game-item:hover img { 
-            filter: grayscale(0%) brightness(1) contrast(1); /* Volledige kleur bij hover */
+            filter: grayscale(0%) brightness(1) contrast(1);
             transform: scale(1.05); 
         }
 
@@ -112,9 +111,20 @@
         @media (max-width: 1200px) { .game-grid { grid-template-columns: repeat(4, 1fr); } }
         @media (max-width: 800px) { .game-grid { grid-template-columns: repeat(3, 1fr); } }
         @media (max-width: 500px) { .game-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; } .logo { display: none; } }
+
+        /* Extra style voor de game container */
+        #game-view { display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:#000; z-index:999999; }
+        #back-btn {
+            position:fixed; top:15px; left:15px; z-index:1000001;
+            background:rgba(0,0,0,0.8); color:#fff; border:1px solid var(--primary);
+            padding:10px 20px; cursor:pointer; font-family:Inter,sans-serif;
+            font-size:12px; text-transform:uppercase; letter-spacing:1px; font-weight:bold;
+        }
+        #back-btn:hover { background: var(--primary); color: #000; }
     </style>
 </head>
 <body id="main-body">
+
 <div id="app-content">
     <div class="bg-fx">
         <div class="orb"></div>
@@ -143,15 +153,18 @@
     </div>
 </div>
 
+<div id="game-view">
+    <button id="back-btn" onclick="goHome()">Back to Menu</button>
+    <div id="game-container" style="width:100%; height:100%;"></div>
+</div>
+
 <script>
     const API_URL = 'https://cdn.jsdelivr.net/gh/HyperRushNet/hyperrushnet.github.io/assets/json/games.json';
-    const LIB_URL = "https://cdn.jsdelivr.net/gh/HyperRushNet/dev/lib/hrn-game_1.1_min.js";
     const BASE_IMG_URL = "https://hyperrushnet.github.io";
     
     let deviceData = [];
     let currentCategory = 'All';
     let userDevice = 'pc-no-touch';
-    let homeHTML = "";
 
     function initTheme() {
         const savedColor = localStorage.getItem('hrn-theme-color') || '#4169e1';
@@ -178,7 +191,6 @@
 
     async function init() {
         userDevice = detectDevice();
-        homeHTML = document.getElementById('app-content').innerHTML;
         initTheme();
         
         try {
@@ -212,7 +224,7 @@
         const displayVal = query.length > 5 ? query.substring(0, 5) + "..." : query;
         document.getElementById('counter').innerText = `${filtered.length} MATCHES // ${userDevice.toUpperCase()} // "${displayVal.toUpperCase()}"`;
         document.getElementById('grid').innerHTML = filtered.map((g) => `
-            <div class="game-item" onclick="launch(${g.number}, '${g.name}')">
+            <div class="game-item" onclick="launch(${g.number})">
                 <div class="img-container">
                     <img src="${BASE_IMG_URL}${g.img}" alt="${g.name}" loading="lazy">
                 </div>
@@ -224,32 +236,19 @@
     }
 
     function goHome() {
-        document.getElementById('app-content').innerHTML = homeHTML;
-        document.getElementById('searchBar').oninput = render;
-        initTheme();
-        render(); 
+        document.getElementById('game-view').style.display = 'none';
+        document.getElementById('app-content').style.display = 'block';
+        document.getElementById('game-container').innerHTML = ''; // Stop de game
     }
 
-    function launch(nr, name) {
-        const currentPrimary = getComputedStyle(document.documentElement).getPropertyValue('--primary');
-        const gameUI = `
-            <div style="margin:0;background:#000;height:100vh;width:100vw;overflow:hidden;position:fixed;top:0;left:0;z-index:999999;">
-                <style>
-                    #back-btn{
-                        position:fixed;top:15px;left:15px;z-index:1000000;
-                        background:rgba(0,0,0,0.8);color:#fff;border:1px solid ${currentPrimary};
-                        padding:10px 20px;cursor:pointer;font-family:Inter,sans-serif;
-                        font-size:12px;text-transform:uppercase;letter-spacing:1px;font-weight:bold;
-                    }
-                    #back-btn:hover{background:${currentPrimary};color:#000;}
-                    hrn-game{width:100%;height:100%;display:block}
-                </style>
-                <button id="back-btn" onclick="goHome()">Back to Menu</button>
-                <hrn-game nr="${nr}" credits="false" redirectblock="true"></hrn-game>
-                <script src="${LIB_URL}"><\/script>
-            </div>
+    function launch(nr) {
+        document.getElementById('app-content').style.display = 'none';
+        document.getElementById('game-view').style.display = 'block';
+        
+        // Injecteer de game direct in de container
+        document.getElementById('game-container').innerHTML = `
+            <hrn-game nr="${nr}" credits="false" redirectblock="true" style="width:100%;height:100%;display:block;"></hrn-game>
         `;
-        document.getElementById('app-content').innerHTML = gameUI;
     }
 
     init();
